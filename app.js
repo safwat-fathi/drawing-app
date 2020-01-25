@@ -1,26 +1,34 @@
 /* 
-- set the canvas width to its styled width.
-- add changing color feature.
 - add drawing shapes (triangle, square, circle, etc...) feature.
 */
 
 (function() {
-  const canvas = document.querySelector("canvas");
-  let canvasStyle = window.getComputedStyle(canvas);
-  let canvasWidth = canvasStyle.getPropertyValue("width");
+  // grabbing elements
+  const $canvas = document.querySelector("canvas");
+  const $color = document.querySelector("input[type='color']");
 
-  // console.log(window.screen.availWidth, window.innerWidth, window.screen.width);
-  console.log(canvasWidth);
-
-  const ctx = canvas.getContext("2d");
-  canvas.width = 600;
-  // draw flag
-  let isDrawing = false;
+  // setting canvas width with the styled width
+  let canvasStyle = window.getComputedStyle($canvas);
+  let canvasWidth = canvasStyle.getPropertyValue("width").replace(/px/gi, "");
+  $canvas.width = Number(canvasWidth);
 
   // drawing styles
-  ctx.strokeStyle = "orangered";
+  const ctx = $canvas.getContext("2d");
+
+  // changing stroke color to color input value
+  ctx.strokeStyle = $color.value;
+
+  // changing stroke color on color input change
+  $color.addEventListener("change", () => {
+    ctx.strokeStyle = $color.value;
+    console.log($color.value);
+  });
+  ctx.lineJoin = "round";
   ctx.lineCap = "round";
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 10;
+
+  // draw flag
+  let isDrawing = false;
 
   // last X axis point for pointer when mouse clicked
   let lastX = 0;
@@ -37,25 +45,20 @@
     ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
     [lastX, lastY] = [e.offsetX, e.offsetY];
-    console.log(
-      `'e.offsetX is ': ${e.offsetX}, "e.offsetY is ":${
-        e.offsetY
-      }, "lastX is ": ${lastX}, "lastY is ": ${lastY}`
-    );
   }
 
   // when mouse move draw()
-  canvas.addEventListener("mousemove", draw);
+  $canvas.addEventListener("mousemove", draw);
 
   // when mouse clicked set isDrawing flag to true
   // & set mouse coordinates to current pointer position
-  canvas.addEventListener("mousedown", e => {
+  $canvas.addEventListener("mousedown", e => {
     isDrawing = true;
     [lastX, lastY] = [e.offsetX, e.offsetY];
   });
 
   // when mouse is not clicked do not draw()
-  canvas.addEventListener("mouseup", () => (isDrawing = false));
+  $canvas.addEventListener("mouseup", () => (isDrawing = false));
   // when mouse is out of canvas do not draw()
-  canvas.addEventListener("mouseup", () => (isDrawing = false));
+  $canvas.addEventListener("mouseout", () => (isDrawing = false));
 })();

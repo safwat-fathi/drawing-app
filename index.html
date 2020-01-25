@@ -13,6 +13,23 @@
     <canvas>
       your browser doesn't support canvas!
     </canvas>
+    <div class="color-picker">
+      <label for="drawing_color">choose a color: </label>
+      <input
+        type="color"
+        id="drawing_color"
+        name="drawing_color"
+        value=""
+        list="presetColors"
+      />
+      <datalist id="presetColors">
+        <option>#ff0000</option>
+        />
+        <option>#00ff00</option>
+        <option>#0000ff</option>
+      </datalist>
+		</div>
+    </form>
     <script src="./app.js"></script>
   </body>
 </html>
