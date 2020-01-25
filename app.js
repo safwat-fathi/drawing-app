@@ -1,4 +1,5 @@
 /* 
+- set stroke size control element.
 - add drawing shapes (triangle, square, circle, etc...) feature.
 */
 
@@ -6,26 +7,36 @@
   // grabbing elements
   const $canvas = document.querySelector("canvas");
   const $color = document.querySelector("input[type='color']");
+  const $stroke = document.querySelector("input[type='number']");
 
   // setting canvas width with the styled width
   let canvasStyle = window.getComputedStyle($canvas);
   let canvasWidth = canvasStyle.getPropertyValue("width").replace(/px/gi, "");
-  $canvas.width = Number(canvasWidth);
+  $canvas.width = +canvasWidth;
 
   // drawing styles
   const ctx = $canvas.getContext("2d");
 
-  // changing stroke color to color input value
+  // setting stroke color to color input value
+  // setting stroke line width to number input value
   ctx.strokeStyle = $color.value;
+  ctx.lineWidth = $stroke.value;
 
-  // changing stroke color on color input change
-  $color.addEventListener("change", () => {
+  document.addEventListener("change", e => {
+    if (e.target !== $color && e.target !== $stroke) return;
     ctx.strokeStyle = $color.value;
-    console.log($color.value);
+    ctx.lineWidth = $stroke.value;
+    console.log($color.value, $stroke.value);
   });
+  // [
+  //   // changing stroke color on color input change
+  //   ($color, $stroke)
+  // ].addEventListener("change", () => {
+  //   ctx.strokeStyle = $color.value;
+  //   console.log($color.value);
+  // });
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
-  ctx.lineWidth = 10;
 
   // draw flag
   let isDrawing = false;
