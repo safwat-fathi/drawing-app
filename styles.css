@@ -22,6 +22,16 @@ body {
 /* core styles
 --------------- */
 canvas {
-  width: 600px;
-  border: 1px solid red;
+  /* width: 600px; */
+  border: 1px solid #119127;
+}
+
+.eraser {
+  background-color: #fff;
+  border: 1px solid #000;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }

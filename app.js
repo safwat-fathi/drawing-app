@@ -7,14 +7,28 @@
   // grabbing elements
   const UISelectors = {
     canvas: document.querySelector("canvas"),
+    eraser: document.querySelector(".eraser"),
     inputs: {
       color: document.querySelector("input[type='color']"),
       stroke: document.querySelector("input[type='number']")
     },
     buttons: {
-      clearBtn: document.querySelector(".clear_canvas")
+      clearBtn: document.querySelector(".clear_canvas"),
+      eraserBtn: document.querySelector(".eraser_toggle")
     }
   };
+
+  // eraser logic
+  UISelectors.buttons.eraserBtn.addEventListener("click", e => {
+    let eraser = UISelectors.eraser,
+      canvas = UISelectors.canvas,
+      eraserStyle = window.getComputedStyle(eraser);
+    // follow pointer
+    canvas.addEventListener("mouseover" && "mousemove", e => {
+      eraser.style.top = `${e.offsetX}px`;
+      eraser.style.left = `${e.offsetY}px`;
+    });
+  });
 
   // setting canvas width with the styled width
   // let canvasStyle = window.getComputedStyle(canvas);
@@ -39,7 +53,9 @@
     "mouseout"
   ];
 
+  // iterate through the events array
   events.forEach(event => {
+    // listen to every event (bubbling to document)
     document.addEventListener(event, e => {
       if (event === "change") {
         Object.keys(UISelectors.inputs).forEach(input => {
@@ -95,11 +111,6 @@
 
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
-
-  // when mouse is not clicked do not draw()
-  UISelectors.canvas.addEventListener("mouseup", () => (isDrawing = false));
-  // when mouse is out of canvas do not draw()
-  UISelectors.canvas.addEventListener("mouseout", () => (isDrawing = false));
 })();
 
 /* 
