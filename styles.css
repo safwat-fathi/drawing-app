@@ -21,6 +21,10 @@ body {
 
 /* core styles
 --------------- */
+.canvas-container {
+  position: relative;
+}
+
 canvas {
   /* width: 600px; */
   border: 1px solid #119127;

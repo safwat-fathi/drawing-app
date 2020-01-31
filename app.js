@@ -18,15 +18,16 @@
     }
   };
 
-  // eraser logic
+  // ****** eraser *******
   UISelectors.buttons.eraserBtn.addEventListener("click", e => {
     let eraser = UISelectors.eraser,
       canvas = UISelectors.canvas,
-      eraserStyle = window.getComputedStyle(eraser);
+      isErasing = true;
     // follow pointer
     canvas.addEventListener("mouseover" && "mousemove", e => {
-      eraser.style.top = `${e.offsetX}px`;
-      eraser.style.left = `${e.offsetY}px`;
+      eraser.style.top = `${e.offsetY}px`;
+      eraser.style.left = `${e.offsetX}px`;
+      ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
     });
   });
 

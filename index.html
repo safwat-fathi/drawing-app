@@ -10,9 +10,12 @@
   </head>
   <body>
     <h1>A basic drawing application</h1>
-    <canvas width="600" height="400">
-      your browser doesn't support canvas!
-    </canvas>
+    <div class="canvas-container">
+      <canvas width="600" height="400">
+        your browser doesn't support canvas!
+      </canvas>
+      <div class="eraser"></div>
+    </div>
     <div class="color-picker">
       <label for="drawing_color">choose a color: </label>
       <input
@@ -35,7 +38,6 @@
     </div>
     <button class="clear_canvas">Clear</button>
     <button class="eraser_toggle">Eraser</button>
-    <div class="eraser"></div>
     <script src="./app.js" type="module"></script>
   </body>
 </html>
