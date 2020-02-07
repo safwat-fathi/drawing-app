@@ -1,6 +1,6 @@
 /* 
 - add drawing shapes (triangle, square, circle, etc...) feature.
-- add eraser.
+- stop erasing when "eraser button" clicked again.
 */
 
 (function() {
@@ -17,19 +17,22 @@
       eraserBtn: document.querySelector(".eraser_toggle")
     }
   };
-
+  let isErasing = false;
   // ****** eraser *******
-  UISelectors.buttons.eraserBtn.addEventListener("click", e => {
-    let eraser = UISelectors.eraser,
-      canvas = UISelectors.canvas,
-      isErasing = true;
-    // follow pointer
-    canvas.addEventListener("mouseover" && "mousemove", e => {
-      eraser.style.top = `${e.offsetY}px`;
-      eraser.style.left = `${e.offsetX}px`;
-      ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
-    });
-  });
+  // UISelectors.buttons.eraserBtn.addEventListener("click", e => {
+  //   let eraser = UISelectors.eraser,
+  //     canvas = UISelectors.canvas;
+  //   isErasing = true;
+
+  //   // follow pointer
+  //   canvas.addEventListener("mouseover" && "mousemove", e => {
+  //     if (!isErasing) return;
+
+  //     eraser.style.top = `${e.offsetY}px`;
+  //     eraser.style.left = `${e.offsetX}px`;
+  //     ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
+  //   });
+  // });
 
   // setting canvas width with the styled width
   // let canvasStyle = window.getComputedStyle(canvas);
@@ -53,7 +56,10 @@
     "mouseup",
     "mouseout"
   ];
-
+  UISelectors.canvas.onmouseout = e => {
+    isErasing = false;
+    console.log(`${e.type} of canvas`);
+  };
   // iterate through the events array
   events.forEach(event => {
     // listen to every event (bubbling to document)
@@ -66,13 +72,18 @@
         });
       }
       // on clear button click
-      if (event === "click" && e.target === UISelectors.buttons.clearBtn) {
-        ctx.clearRect(
-          0,
-          0,
-          UISelectors.canvas.width,
-          UISelectors.canvas.height
-        );
+      if (event === "click") {
+        if (e.target === UISelectors.buttons.clearBtn) {
+          ctx.clearRect(
+            0,
+            0,
+            UISelectors.canvas.width,
+            UISelectors.canvas.height
+          );
+        }
+        if (e.target === UISelectors.buttons.eraserBtn) {
+          isErasing = true;
+        }
       }
       // when mouse move draw()
       if (event === "mousemove" && e.target === UISelectors.canvas) {
@@ -81,12 +92,32 @@
       if (event === "mouseup" || event === "mouseout") {
         isDrawing = false;
       }
+
       // when mouse clicked set isDrawing flag to true
       // & set mouse coordinates to current pointer position
       if (event === "mousedown") {
         isDrawing = true;
         [lastX, lastY] = [e.offsetX, e.offsetY];
       }
+      if (
+        (event === "mouseover" || "mousemove") &&
+        e.target === UISelectors.canvas
+      ) {
+        if (!isErasing) return;
+
+        UISelectors.eraser.style.top = `${e.offsetY}px`;
+        UISelectors.eraser.style.left = `${e.offsetX}px`;
+        ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
+
+        // console.log(`canvas ${event}`, `isErasing: ${isErasing}`);
+      }
+      // canvas.addEventListener("mouseover" && "mousemove", e => {
+      // 	if (!isErasing) return;
+
+      // 	eraser.style.top = `${e.offsetY}px`;
+      // 	eraser.style.left = `${e.offsetX}px`;
+      // 	ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
+      // });
     });
   });
 
