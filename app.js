@@ -1,6 +1,6 @@
 /* 
 - add drawing shapes (triangle, square, circle, etc...) feature.
-- stop erasing when "eraser button" clicked again.
+- stop erasing when mouseup on canvas after clicking eraser button.
 */
 
 (function() {
@@ -17,35 +17,45 @@
       eraserBtn: document.querySelector(".eraser_toggle")
     }
   };
+  // erase flag
   let isErasing = false;
-  // ****** eraser *******
-  // UISelectors.buttons.eraserBtn.addEventListener("click", e => {
-  //   let eraser = UISelectors.eraser,
-  //     canvas = UISelectors.canvas;
-  //   isErasing = true;
-
-  //   // follow pointer
-  //   canvas.addEventListener("mouseover" && "mousemove", e => {
-  //     if (!isErasing) return;
-
-  //     eraser.style.top = `${e.offsetY}px`;
-  //     eraser.style.left = `${e.offsetX}px`;
-  //     ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
-  //   });
-  // });
-
-  // setting canvas width with the styled width
-  // let canvasStyle = window.getComputedStyle(canvas);
-  // let canvasWidth = canvasStyle.getPropertyValue("width").replace(/px/gi, "");
-  // canvas.width = +canvasWidth;
-
+  // draw flag
+  let isDrawing = false;
   // drawing styles
   const ctx = UISelectors.canvas.getContext("2d");
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
 
   // setting stroke color to color input value
   ctx.strokeStyle = UISelectors.inputs.color.value;
   // setting stroke line width to number input value
   ctx.lineWidth = UISelectors.inputs.stroke.value;
+
+  // last X axis point for pointer when mouse clicked
+  let lastX = 0;
+  // last Y axis point for pointer when mouse clicked
+  let lastY = 0;
+
+  function draw(e) {
+    if (!isDrawing) return;
+
+    // draw strokes
+    ctx.beginPath();
+    // start from
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+  }
+
+  function erase(e) {
+    if (!isErasing) return;
+
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+    UISelectors.eraser.style.left = `${lastX}px`;
+    UISelectors.eraser.style.top = `${lastY}px`;
+    ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
+  }
 
   // Event Listeners
   const events = [
@@ -56,10 +66,7 @@
     "mouseup",
     "mouseout"
   ];
-  // UISelectors.canvas.onmouseout = e => {
-  //   isErasing = false;
-  //   console.log(`${e.type} of ${e.target}`);
-  // };
+
   // iterate through the events array
   events.forEach(event => {
     // listen to every event (bubbling to document)
@@ -108,46 +115,10 @@
         (event === "mouseover" || "mousemove") &&
         e.target === UISelectors.canvas
       ) {
-        if (!isErasing) return;
-
-        UISelectors.eraser.style.top = `${e.offsetY}px`;
-        UISelectors.eraser.style.left = `${e.offsetX}px`;
-        ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
-
-        // console.log(`canvas ${event}`, `isErasing: ${isErasing}`);
+        erase(e);
       }
-      // canvas.addEventListener("mouseover" && "mousemove", e => {
-      // 	if (!isErasing) return;
-
-      // 	eraser.style.top = `${e.offsetY}px`;
-      // 	eraser.style.left = `${e.offsetX}px`;
-      // 	ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
-      // });
     });
   });
-
-  // draw flag
-  let isDrawing = false;
-
-  // last X axis point for pointer when mouse clicked
-  let lastX = 0;
-  // last Y axis point for pointer when mouse clicked
-  let lastY = 0;
-
-  function draw(e) {
-    if (!isDrawing) return;
-
-    // draw strokes
-    ctx.beginPath();
-    // start from
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-    [lastX, lastY] = [e.offsetX, e.offsetY];
-  }
-
-  ctx.lineJoin = "round";
-  ctx.lineCap = "round";
 })();
 
 /* 
