@@ -56,10 +56,10 @@
     "mouseup",
     "mouseout"
   ];
-  UISelectors.canvas.onmouseout = e => {
-    isErasing = false;
-    console.log(`${e.type} of canvas`);
-  };
+  // UISelectors.canvas.onmouseout = e => {
+  //   isErasing = false;
+  //   console.log(`${e.type} of ${e.target}`);
+  // };
   // iterate through the events array
   events.forEach(event => {
     // listen to every event (bubbling to document)
@@ -92,12 +92,17 @@
       if (event === "mouseup" || event === "mouseout") {
         isDrawing = false;
       }
-
       // when mouse clicked set isDrawing flag to true
       // & set mouse coordinates to current pointer position
       if (event === "mousedown") {
         isDrawing = true;
         [lastX, lastY] = [e.offsetX, e.offsetY];
+      }
+      // ****** eraser *******
+      if (event === "mouseout" && e.target === UISelectors.canvas) {
+        isErasing = false;
+        UISelectors.eraser.style.top = 0;
+        UISelectors.eraser.style.left = 0;
       }
       if (
         (event === "mouseover" || "mousemove") &&
