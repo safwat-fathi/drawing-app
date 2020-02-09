@@ -20,26 +20,52 @@ const UICtrl = (() => {
 })();
 
 const DrawCtrl = (uiCtlr => {
-  let drawingOptions = {
-    lineJoin: "",
-    lineCap: "",
-    contextType: ""
-  };
+  let lastX = 0,
+    lastY = 0;
+  // isDrawing = false;
   const el = uiCtlr.getElements();
   const draw = (e, options = {}) => {
     const ctx = el.canvas.getContext(options.contextType);
+    // drawing options
     ctx.lineJoin = options.lineJoin;
     ctx.lineCap = options.lineCap;
-    console.log(ctx);
+    // drawing action
+    // if (!isDrawing) return;
+    // draw strokes
+    ctx.beginPath();
+    // start from
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+    // console.log(lastX, lastY);
   };
 
-  return { draw };
+  return {
+    // isDrawing,
+    lastX,
+    lastY,
+    draw
+  };
 })(UICtrl);
-DrawCtrl.draw(null, {
-  lineJoin: "round",
-  lineCap: "round",
-  contextType: "2d"
+
+UICtrl.getElements().canvas.addEventListener("mousemove", e => {
+  DrawCtrl.draw(e, {
+    contextType: "2d",
+    lineJoin: "round",
+    lineCap: "round"
+  });
 });
+UICtrl.getElements().canvas.addEventListener("mouseup" || "mouseout", e => {
+  // DrawCtrl.isDrawing = false;
+  console.log("not drawing");
+});
+UICtrl.getElements().canvas.addEventListener("mousedown", e => {
+  // DrawCtrl.isDrawing = true;
+  [DrawCtrl.lastX, DrawCtrl.lastY] = [e.offsetX, e.offsetY];
+  console.log("drawing");
+});
+
 const App = (uiCtrl => {})(UICtrl);
 
 // import UICtrl from "./UICtrl.mjs";
