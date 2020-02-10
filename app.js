@@ -1,9 +1,8 @@
 /* 
 - add drawing shapes (triangle, square, circle, etc...) feature.
-- stop erasing when mouseup on canvas after clicking eraser button.
+- fire erasing on (mouseup, mousedown) on canvas after clicking eraser button.
 */
-
-(function() {
+(() => {
   // grabbing elements
   const UISelectors = {
     canvas: document.querySelector("canvas"),
@@ -27,8 +26,10 @@
   ctx.lineCap = "round";
 
   // setting stroke color to color input value
+  // @ts-ignore
   ctx.strokeStyle = UISelectors.inputs.color.value;
   // setting stroke line width to number input value
+  // @ts-ignore
   ctx.lineWidth = UISelectors.inputs.stroke.value;
 
   // last X axis point for pointer when mouse clicked
@@ -36,6 +37,7 @@
   // last Y axis point for pointer when mouse clicked
   let lastY = 0;
 
+  // drawing function
   function draw(e) {
     if (!isDrawing) return;
 
@@ -48,11 +50,14 @@
     [lastX, lastY] = [e.offsetX, e.offsetY];
   }
 
+  // erasing function
   function erase(e) {
     if (!isErasing) return;
 
     [lastX, lastY] = [e.offsetX, e.offsetY];
+    // @ts-ignore
     UISelectors.eraser.style.left = `${lastX}px`;
+    // @ts-ignore
     UISelectors.eraser.style.top = `${lastY}px`;
     ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
   }
@@ -74,7 +79,9 @@
       if (event === "change") {
         Object.keys(UISelectors.inputs).forEach(input => {
           if (e.target !== UISelectors.inputs[input]) return;
+          // @ts-ignore
           ctx.strokeStyle = UISelectors.inputs.color.value;
+          // @ts-ignore
           ctx.lineWidth = UISelectors.inputs.stroke.value;
         });
       }
@@ -103,12 +110,15 @@
       // & set mouse coordinates to current pointer position
       if (event === "mousedown") {
         isDrawing = true;
+        // @ts-ignore
         [lastX, lastY] = [e.offsetX, e.offsetY];
       }
       // ****** eraser *******
       if (event === "mouseout" && e.target === UISelectors.canvas) {
         isErasing = false;
+        // @ts-ignore
         UISelectors.eraser.style.top = 0;
+        // @ts-ignore
         UISelectors.eraser.style.left = 0;
       }
       if (
