@@ -11,24 +11,34 @@ const UICtrl = (() => {
       eraserBtn: document.querySelector(".eraser_toggle")
     }
   };
-  const getElements = () => {
-    return UIElements;
-  };
+
+  // const changeInputs = (color, stroke) => {
+
+  // }
   return {
-    getElements
+    getElements: () => {
+      return UIElements;
+    }
   };
 })();
+document.addEventListener("change", e => {
+  console.log("change done");
+});
 
+/* ******************************** */
 const DrawCtrl = (uiCtlr => {
   let lastX = 0,
     lastY = 0;
   // isDrawing = false;
+
   const el = uiCtlr.getElements();
-  const draw = (e, options = {}) => {
-    const ctx = el.canvas.getContext(options.contextType);
+  const draw = (e, drawStyles = {}) => {
+    const ctx = el.canvas.getContext("2d");
     // drawing options
-    ctx.lineJoin = options.lineJoin;
-    ctx.lineCap = options.lineCap;
+    ctx.lineJoin = drawStyles.lineJoin;
+    ctx.lineCap = drawStyles.lineCap;
+    ctx.strokeStyle = drawStyles.color;
+    ctx.lineWidth = drawStyles.stroke;
     // drawing action
     // if (!isDrawing) return;
     // draw strokes
@@ -49,9 +59,15 @@ const DrawCtrl = (uiCtlr => {
   };
 })(UICtrl);
 
+let drawStyles = {
+  color: UICtrl.getElements().inputs.color.value,
+  stroke: UICtrl.getElements().inputs.stroke.value
+};
+
+console.log(drawStyles.color, drawStyles.stroke);
+
 UICtrl.getElements().canvas.addEventListener("mousemove", e => {
   DrawCtrl.draw(e, {
-    contextType: "2d",
     lineJoin: "round",
     lineCap: "round"
   });
