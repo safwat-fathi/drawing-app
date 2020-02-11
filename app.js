@@ -13,7 +13,8 @@
     },
     buttons: {
       clearBtn: document.querySelector(".clear_canvas"),
-      eraserBtn: document.querySelector(".eraser_toggle")
+      eraserBtn: document.querySelector(".eraser_toggle"),
+      brushBtn: document.querySelector(".brush_toggle")
     }
   };
   // erase flag
@@ -72,6 +73,8 @@
     "mouseout"
   ];
 
+  let currentState = isDrawing;
+
   // iterate through the events array
   events.forEach(event => {
     // listen to every event (bubbling to document)
@@ -97,35 +100,43 @@
         }
         if (e.target === UISelectors.buttons.eraserBtn) {
           isErasing = true;
+          isDrawing = false;
+          console.log(
+            `drawing state is: ${isDrawing}`,
+            `erasing state is: ${isErasing}`
+          );
+        }
+        if (e.target === UISelectors.buttons.brushBtn) {
+          isErasing = false;
+          isDrawing = true;
+          console.log(
+            `drawing state is: ${isDrawing}`,
+            `erasing state is: ${isErasing}`
+          );
         }
       }
       // when mouse move draw()
       if (event === "mousemove" && e.target === UISelectors.canvas) {
         draw(e);
+        erase(e);
       }
-      if (event === "mouseup" || event === "mouseout") {
+      if (
+        (event === "mouseup" || event === "mouseout") &&
+        e.target === UISelectors.canvas
+      ) {
         isDrawing = false;
+        isErasing = false;
+        console.log(
+          `drawing state is: ${isDrawing}`,
+          `erasing state is: ${isErasing}`
+        );
       }
       // when mouse clicked set isDrawing flag to true
       // & set mouse coordinates to current pointer position
       if (event === "mousedown") {
-        isDrawing = true;
+        // isDrawing = true;
         // @ts-ignore
         [lastX, lastY] = [e.offsetX, e.offsetY];
-      }
-      // ****** eraser *******
-      if (event === "mouseout" && e.target === UISelectors.canvas) {
-        isErasing = false;
-        // @ts-ignore
-        UISelectors.eraser.style.top = 0;
-        // @ts-ignore
-        UISelectors.eraser.style.left = 0;
-      }
-      if (
-        (event === "mouseover" || "mousemove") &&
-        e.target === UISelectors.canvas
-      ) {
-        erase(e);
       }
     });
   });
