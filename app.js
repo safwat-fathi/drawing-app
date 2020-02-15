@@ -133,8 +133,8 @@
       }
       // when mouse clicked set isDrawing flag to true
       // & set mouse coordinates to current pointer position
-      if (event === "mousedown") {
-        // isDrawing = true;
+      if (event === "mousedown" && e.target === UISelectors.canvas) {
+        isDrawing = true;
         // @ts-ignore
         [lastX, lastY] = [e.offsetX, e.offsetY];
       }
