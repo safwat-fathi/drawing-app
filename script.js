@@ -1,3 +1,8 @@
+/* 
+- use color & line width inputs.
+- add clear button functionality. 
+*/
+
 // UI elements
 const canvas = document.querySelector("canvas"),
   eraser = document.querySelector(".eraser"),
@@ -59,6 +64,7 @@ for (let event of events) {
       }
       if (isEraser) {
         erase(e);
+        /* move eraser with pointer */
         // @ts-ignore
         eraser.style.left = `${e.offsetX}px`;
         // @ts-ignore
@@ -78,6 +84,12 @@ for (let event of events) {
       console.log("done");
       isDrawing = false;
       isErasing = false;
+
+      /* eraser style to origin */
+      // @ts-ignore
+      eraser.style.left = `0`;
+      // @ts-ignore
+      eraser.style.top = `0`;
     }
 
     /* buttons
