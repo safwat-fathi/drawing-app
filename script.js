@@ -13,9 +13,10 @@ let lastY = 0;
 // drawing state
 let isBrush,
   isEraser,
+  isErasing,
   isDrawing = false;
 
-/* draw function */
+/* drawing function */
 function draw(e) {
   if (!isDrawing) return;
 
@@ -26,6 +27,14 @@ function draw(e) {
   ctx.lineTo(e.offsetX, e.offsetY);
   ctx.stroke();
   [lastX, lastY] = [e.offsetX, e.offsetY];
+}
+
+/* erasing function */
+function erase(e) {
+  if (!isErasing) return;
+
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+  ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
 }
 
 // Event Listeners
@@ -49,18 +58,26 @@ for (let event of events) {
         // console.log(`drawing on ${lastX} and ${lastY}`);
       }
       if (isEraser) {
+        erase(e);
+        // @ts-ignore
+        eraser.style.left = `${e.offsetX}px`;
+        // @ts-ignore
+        eraser.style.top = `${e.offsetY}px`;
         // console.log(`erasing on ${lastX} and ${lastY}`);
       }
     }
     if ((isBrush || isEraser) && e.target === canvas && event === "mousedown") {
       console.log("drawing or erasing");
 
-      isDrawing = true;
+      isBrush ? (isDrawing = true) : (isDrawing = false);
+      isEraser ? (isErasing = true) : (isErasing = false);
+
       [lastX, lastY] = [e.offsetX, e.offsetY];
     }
     if (e.target === canvas && (event === "mouseup" || event === "mouseout")) {
       console.log("done");
       isDrawing = false;
+      isErasing = false;
     }
 
     /* buttons
