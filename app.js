@@ -1,167 +1,97 @@
 /* 
-- add drawing shapes (triangle, square, circle, etc...) feature.
-- fire erasing on (mouseup, mousedown) on canvas after clicking eraser button.
+- use color & line width inputs.
 */
-(() => {
-  // grabbing elements
-  const UISelectors = {
-    canvas: document.querySelector("canvas"),
-    eraser: document.querySelector(".eraser"),
-    inputs: {
-      color: document.querySelector("input[type='color']"),
-      stroke: document.querySelector("input[type='number']")
-    },
-    buttons: {
-      clearBtn: document.querySelector(".clear_canvas"),
-      eraserBtn: document.querySelector(".eraser_toggle"),
-      brushBtn: document.querySelector(".brush_toggle")
-    }
-  };
-  // erase flag
-  let isErasing = false;
-  // draw flag
-  let isDrawing = false;
-  // drawing styles
-  const ctx = UISelectors.canvas.getContext("2d");
-  ctx.lineJoin = "round";
-  ctx.lineCap = "round";
 
-  // setting stroke color to color input value
-  // @ts-ignore
-  ctx.strokeStyle = UISelectors.inputs.color.value;
-  // setting stroke line width to number input value
-  // @ts-ignore
-  ctx.lineWidth = UISelectors.inputs.stroke.value;
+// UI elements
+const canvas = document.querySelector("canvas"),
+  eraserBtn = document.querySelector(".eraser_toggle"),
+  brushBtn = document.querySelector(".brush_toggle"),
+  clearBtn = document.querySelector(".clear_canvas");
 
-  // last X axis point for pointer when mouse clicked
-  let lastX = 0;
-  // last Y axis point for pointer when mouse clicked
-  let lastY = 0;
+// drawing/erasing vars
+const ctx = canvas.getContext("2d");
+// last X axis point for pointer when mouse clicked
+let lastX = 0;
+// last Y axis point for pointer when mouse clicked
+let lastY = 0;
+// drawing state
+let isBrush,
+  isEraser,
+  isErasing,
+  isDrawing = false;
 
-  // drawing function
-  function draw(e) {
-    if (!isDrawing) return;
+/* drawing function */
+function draw(e) {
+  if (!isDrawing) return;
 
-    // draw strokes
-    ctx.beginPath();
-    // start from
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-    [lastX, lastY] = [e.offsetX, e.offsetY];
-  }
+  // draw strokes
+  ctx.beginPath();
+  // start from
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+}
 
-  // erasing function
-  function erase(e) {
-    if (!isErasing) return;
+/* erasing function */
+function erase(e) {
+  if (!isErasing) return;
 
-    [lastX, lastY] = [e.offsetX, e.offsetY];
-    // @ts-ignore
-    UISelectors.eraser.style.left = `${lastX}px`;
-    // @ts-ignore
-    UISelectors.eraser.style.top = `${lastY}px`;
-    ctx.clearRect(e.offsetX, e.offsetY, 40, 40);
-  }
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+  ctx.clearRect(e.offsetX, e.offsetY, 30, 30);
+}
 
-  // Event Listeners
-  const events = [
-    "change",
-    "click",
-    "mousedown",
-    "mousemove",
-    "mouseup",
-    "mouseout"
-  ];
+// Event Listeners
+const events = [
+  "change",
+  "click",
+  "mousedown",
+  "mousemove",
+  "mouseup",
+  "mouseout"
+];
 
-  let currentState = isDrawing;
-
-  // iterate through the events array
-  events.forEach(event => {
-    // listen to every event (bubbling to document)
-    document.addEventListener(event, e => {
-      if (event === "change") {
-        Object.keys(UISelectors.inputs).forEach(input => {
-          if (e.target !== UISelectors.inputs[input]) return;
-          // @ts-ignore
-          ctx.strokeStyle = UISelectors.inputs.color.value;
-          // @ts-ignore
-          ctx.lineWidth = UISelectors.inputs.stroke.value;
-        });
-      }
-      // on clear button click
-      if (event === "click") {
-        if (e.target === UISelectors.buttons.clearBtn) {
-          ctx.clearRect(
-            0,
-            0,
-            UISelectors.canvas.width,
-            UISelectors.canvas.height
-          );
-        }
-        if (e.target === UISelectors.buttons.eraserBtn) {
-          isErasing = true;
-          isDrawing = false;
-          console.log(
-            `drawing state is: ${isDrawing}`,
-            `erasing state is: ${isErasing}`
-          );
-        }
-        if (e.target === UISelectors.buttons.brushBtn) {
-          isErasing = false;
-          isDrawing = true;
-          console.log(
-            `drawing state is: ${isDrawing}`,
-            `erasing state is: ${isErasing}`
-          );
-        }
-      }
-      // when mouse move draw()
-      if (event === "mousemove" && e.target === UISelectors.canvas) {
+for (let event of events) {
+  document.addEventListener(event, e => {
+    /* canvas
+		----------- */
+    if (e.target === canvas && event === "mousemove") {
+      if (isBrush) {
         draw(e);
+        canvas.style.cursor = 'url("./img/brush.png") 4 45, auto';
+      }
+      if (isEraser) {
         erase(e);
+        canvas.style.cursor = 'url("./img/eraser.png") 10 12, auto';
       }
-      if (
-        (event === "mouseup" || event === "mouseout") &&
-        e.target === UISelectors.canvas
-      ) {
-        isDrawing = false;
-        isErasing = false;
-        console.log(
-          `drawing state is: ${isDrawing}`,
-          `erasing state is: ${isErasing}`
-        );
-      }
-      // when mouse clicked set isDrawing flag to true
-      // & set mouse coordinates to current pointer position
-      if (event === "mousedown" && e.target === UISelectors.canvas) {
-        isDrawing = true;
-        // @ts-ignore
-        [lastX, lastY] = [e.offsetX, e.offsetY];
-      }
-    });
+    }
+    if ((isBrush || isEraser) && e.target === canvas && event === "mousedown") {
+      isBrush ? (isDrawing = true) : (isDrawing = false);
+      isEraser ? (isErasing = true) : (isErasing = false);
+      // @ts-ignore
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    }
+    if (e.target === canvas && (event === "mouseup" || event === "mouseout")) {
+      isDrawing = false;
+      isErasing = false;
+    }
+
+    /* buttons
+		----------- */
+    if (event === "click" && e.target === brushBtn) {
+      isBrush = true;
+      isEraser = false;
+      console.log("drawing");
+    }
+    if (event === "click" && e.target === eraserBtn) {
+      isEraser = true;
+      isBrush = false;
+      console.log("erasing");
+    }
+    if (event === "click" && e.target === clearBtn) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    /* inputs
+		----------- */
   });
-})();
-
-/* 
----------------------------------------------------------
-----------------------------------------------------------
-*/
-
-// import UICtrl from "./UICtrl.mjs";
-// import DrawCtrl from "./DrawCtrl.mjs";
-
-// const App = ((UICtrl, DrawCtrl) => {
-//   const loadEventListeners = () => {
-//     // get ui selectors
-//     const UISelectors = UICtrl.getSelectors();
-//     console.log(UISelectors);
-//   };
-
-//   return {
-//     init: () => {
-//       loadEventListeners();
-//     }
-//   };
-// })(UICtrl, DrawCtrl);
-
-// App.init();
+}
