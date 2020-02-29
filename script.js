@@ -6,7 +6,9 @@
 const canvas = document.querySelector("canvas"),
   clearBtn = document.querySelector(".clear_canvas"),
   eraserBtn = document.querySelector(".eraser_toggle"),
-  brushBtn = document.querySelector(".brush_toggle");
+  brushBtn = document.querySelector(".brush_toggle"),
+  lineWidth = document.querySelector("#line_width"),
+  drawColor = document.querySelector("#drawing_color");
 
 // drawing/erasing vars
 const ctx = canvas.getContext("2d");
@@ -24,6 +26,8 @@ let isBrush,
 function draw(e) {
   if (!isDrawing) return;
 
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
   // draw strokes
   ctx.beginPath();
   // start from
@@ -75,7 +79,7 @@ for (let event of events) {
           }
           if (isEraser) {
             erase(e);
-            canvas.style.cursor = "url('./img/eraser.png') 1 30, auto";
+            canvas.style.cursor = "url('./img/eraser.png') 1 10, auto";
           }
         }
         break;
@@ -94,6 +98,17 @@ for (let event of events) {
           isErasing = false;
         }
         break;
+      /* changing draw style */
+
+      case "change":
+        if (e.target === lineWidth) {
+          // @ts-ignore
+          ctx.lineWidth = lineWidth.value;
+        }
+        if (e.target === drawColor) {
+          // @ts-ignore
+          ctx.strokeStyle = drawColor.value;
+        }
       default:
         break;
     }
