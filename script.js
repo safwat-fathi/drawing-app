@@ -10,7 +10,6 @@ const canvas = document.querySelector("canvas"),
   lineWidth = document.querySelector("#line_width"),
   drawColor = document.querySelector("#drawing_color");
 
-// drawing/erasing vars
 const ctx = canvas.getContext("2d");
 // last X axis point for pointer when mouse clicked
 let lastX = 0;
@@ -54,6 +53,12 @@ const events = [
   "mouseup",
   "mouseout"
 ];
+
+/* resize canvas width on window resizing */
+// window.addEventListener("resize", e => {
+//   canvas.width = window.innerWidth - 50;
+//   canvas.height = window.innerHeight - 50;
+// });
 
 for (let event of events) {
   document.addEventListener(event, e => {
@@ -102,6 +107,10 @@ for (let event of events) {
 
       case "change":
         if (e.target === lineWidth) {
+          // @ts-ignore
+          if (lineWidth.value > 20) {
+            return;
+          }
           // @ts-ignore
           ctx.lineWidth = lineWidth.value;
         }
